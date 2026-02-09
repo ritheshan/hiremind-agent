@@ -2,7 +2,8 @@
  * Main Application Component
  * Sets up routing for all pages
  */
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, ProtectedRoute, useAuth } from './auth';
 
 // Landing & Auth Pages
 import LandingPage from './pages/Landing/LandingPage';
@@ -21,29 +22,57 @@ import MockInterviewPage from './pages/Interview/MockInterviewPage';
 import ProfileSettingsPage from './pages/Profile/ProfileSettingsPage';
 import AboutPage from './pages/About/AboutPage';
 
+// PublicRoute - redirects authenticated users to dashboard
+const PublicRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-600 border-t-transparent"></div>
+      </div>
+    );
+  }
+  
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+  return children;
+};
+
+// AppRoutes - component that uses hooks inside Router
+const AppRoutes = () => {
+  return (
+    <Routes>
+      {/* Public Routes - redirect to dashboard if logged in */}
+      <Route path="/" element={<PublicRoute><LandingPage /></PublicRoute>} />
+      <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+      <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+      <Route path="/about-public" element={<AboutPage />} />
+
+      {/* Protected Routes (Dashboard) */}
+      <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+      <Route path="/resume-analysis" element={<ProtectedRoute><ResumeAnalysisPage /></ProtectedRoute>} />
+      <Route path="/job-discovery" element={<ProtectedRoute><JobDiscoveryPage /></ProtectedRoute>} />
+      <Route path="/cover-letter" element={<ProtectedRoute><CoverLetterPage /></ProtectedRoute>} />
+      <Route path="/applications" element={<ProtectedRoute><ApplicationTrackingPage /></ProtectedRoute>} />
+      <Route path="/skill-gap" element={<ProtectedRoute><SkillGapAnalysisPage /></ProtectedRoute>} />
+      <Route path="/interview-prep" element={<ProtectedRoute><InterviewPrepPage /></ProtectedRoute>} />
+      <Route path="/mock-interview" element={<ProtectedRoute><MockInterviewPage /></ProtectedRoute>} />
+      <Route path="/profile" element={<ProtectedRoute><ProfileSettingsPage /></ProtectedRoute>} />
+      <Route path="/about" element={<ProtectedRoute><AboutPage /></ProtectedRoute>} />
+    </Routes>
+  );
+};
+
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/about-public" element={<AboutPage />} />
-
-        {/* Protected Routes (Dashboard) */}
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/resume-analysis" element={<ResumeAnalysisPage />} />
-        <Route path="/job-discovery" element={<JobDiscoveryPage />} />
-        <Route path="/cover-letter" element={<CoverLetterPage />} />
-        <Route path="/applications" element={<ApplicationTrackingPage />} />
-        <Route path="/skill-gap" element={<SkillGapAnalysisPage />} />
-        <Route path="/interview-prep" element={<InterviewPrepPage />} />
-        <Route path="/mock-interview" element={<MockInterviewPage />} />
-        <Route path="/profile" element={<ProfileSettingsPage />} />
-        <Route path="/about" element={<AboutPage />} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <AppRoutes />
+      </Router>
+    </AuthProvider>
   );
 }
 
