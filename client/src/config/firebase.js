@@ -4,13 +4,14 @@ import {
   GoogleAuthProvider
 } from "firebase/auth";
 
+// Firebase configuration from environment variables
 const firebaseConfig = {
-  apiKey: "AIzaSyA-DljXeuXYaNhySppPSMKQYTl4sp-M7I4",
-  authDomain: "hiremind-auth.firebaseapp.com",
-  projectId: "hiremind-auth",
-  storageBucket: "hiremind-auth.firebasestorage.app",
-  messagingSenderId: "919398080762",
-  appId: "1:919398080762:web:58c1a0e36ef2bcd66fa943"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 // Initialize Firebase
