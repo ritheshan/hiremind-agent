@@ -16,8 +16,14 @@ import { Link } from 'react-router-dom';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import StatCard from '../../components/ui/StatCard';
 import { dashboardStats, applicationsData, jobsData } from '../../data/mockData';
+import { useAuth } from '../../auth';
 
 const DashboardPage = () => {
+  const { user } = useAuth();
+  
+  // Get first name from displayName or email
+  const firstName = user?.displayName?.split(' ')[0] || user?.email?.split('@')[0] || 'there';
+
   // Quick action items for the dashboard
   const quickActions = [
     { 
@@ -48,7 +54,7 @@ const DashboardPage = () => {
       {/* Page Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Welcome back, John! 👋
+          Welcome back, {firstName}! 👋
         </h1>
         <p className="text-gray-600">
           Here's an overview of your job search progress

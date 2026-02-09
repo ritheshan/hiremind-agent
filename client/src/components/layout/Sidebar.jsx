@@ -2,7 +2,7 @@
  * Sidebar Component
  * Navigation sidebar for authenticated pages (dashboard, etc.)
  */
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Brain,
   LayoutDashboard,
@@ -20,9 +20,12 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { useState } from 'react';
+import { useAuth } from '../../auth';
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Navigation items configuration
@@ -87,13 +90,16 @@ const Sidebar = () => {
 
       {/* Logout Button */}
       <div className="absolute bottom-0 left-0 right-0 p-4 border-t bg-white">
-        <Link
-          to="/"
-          className="sidebar-link text-red-500 hover:bg-red-50 hover:text-red-600"
+        <button
+          onClick={async () => {
+            await logout();
+            navigate('/login');
+          }}
+          className="sidebar-link text-red-500 hover:bg-red-50 hover:text-red-600 w-full"
         >
           <LogOut className="w-5 h-5 flex-shrink-0" />
           {!isCollapsed && <span>Logout</span>}
-        </Link>
+        </button>
       </div>
     </aside>
   );
